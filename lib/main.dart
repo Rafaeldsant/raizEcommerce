@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:raiz_ecommerce/global.dart' as global;
+import 'package:raiz_ecommerce/page_menu.dart';
+import 'package:raiz_ecommerce/page_perfil.dart';
 
 void main() {
   runApp(MyApp());
@@ -39,18 +42,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var imagens_list_aux = [];
 
+  int _currentIndex = 1;
+
   TextEditingController editingController = TextEditingController();
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
+  void onTabTapped(int index) {
     setState(() {
-      _counter++;
+      _currentIndex = index;
+      print(_currentIndex);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: myDrawer(),
       backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: global.cor_primaria),
@@ -63,52 +74,48 @@ class _MyHomePageState extends State<MyHomePage> {
           ]),
         ),
         actions: [
-          Padding(padding: EdgeInsets.all(5), child:
-          CircleAvatar(
-            backgroundColor: Colors.grey,
-            backgroundImage: AssetImage('assets/outros/avatar.jpg'),
-          )
-          )
+          Padding(
+              padding: EdgeInsets.all(5),
+              child: CircleAvatar(
+                backgroundColor: Colors.grey,
+                backgroundImage: AssetImage('assets/outros/avatar.jpg'),
+              ))
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(child: Column(children: [searchBar(), destaqueSection(), sectionComponent('Feminino', 'feminino'), sectionComponent('Masculino', 'masculino'), sectionComponent('Marcas Brasileiras', 'mb')])),
+      body: body(),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: global.cor_secundaria,
+        type: BottomNavigationBarType.fixed,
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.home), label: 'Início'),
+          BottomNavigationBarItem(icon: Icon(LineAwesomeIcons.user), label: 'Perfil'),
+        ],
       ),
     );
   }
 
-  myDrawer() {
-    return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-          ),
-          ListTile(
-            title: Text('Item 1'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
-          ListTile(
-            title: Text('Item 2'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
-        ],
-      ),
-    );
+  body() {
+    if (_currentIndex == 0) {
+      return PageMenu();
+    } else if (_currentIndex == 1) {
+      return SingleChildScrollView(
+          child: Container(child:
+            Column(children: [
+              searchBar(),
+              destaqueSection(),
+              sectionComponent('Feminino', 'feminino'),
+              sectionComponent('Masculino', 'masculino'),
+              sectionComponent('Marcas Brasileiras', 'mb')
+            ])
+          )
+      );
+    } else {
+      return PagePerfil();
+    }
   }
 
   searchBar() {
@@ -122,9 +129,9 @@ class _MyHomePageState extends State<MyHomePage> {
           decoration: InputDecoration(
               border: InputBorder.none,
               filled: true,
-              fillColor: Color(0xffE9E9E9),
+              fillColor: Colors.grey[100],
               hintText: "Busca Raiz",
-              hintStyle: TextStyle(color: Colors.grey[400]),
+              hintStyle: TextStyle(color: Colors.grey[500]),
               contentPadding: const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 15.0),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
@@ -147,7 +154,19 @@ class _MyHomePageState extends State<MyHomePage> {
     print(destaques_list_aux);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(padding: EdgeInsets.all(12), child: Text('Destaques', textScaleFactor: 2, style: TextStyle(fontWeight: FontWeight.bold))),
+      Container(
+          margin: EdgeInsets.only(top: 12),
+          padding: EdgeInsets.all(12),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('Destaques', textScaleFactor: 1.8, style: TextStyle(fontWeight: FontWeight.bold)),
+            Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(200)),
+                  color: global.cor_primaria,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: Row(children: [Text('Seja Patrão', textScaleFactor: 1.2, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)), SizedBox(width: 5), Icon(Icons.star, size: 20, color: Colors.white)]))
+          ])),
       SizedBox(height: 20),
       Container(height: 100, child: ListView(scrollDirection: Axis.horizontal, children: [for (int i = 0; i < destaques_list_aux.length; i++) destaquesCards(destaques_list_aux[i], i)]))
     ]);
@@ -158,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     destaques_list.add({"titulo": "Roupas", "icon": FontAwesomeIcons.tshirt});
     destaques_list.add({"titulo": "Casa", "icon": FontAwesomeIcons.home});
-    destaques_list.add({"titulo": "Roupas", "icon": FontAwesomeIcons.running});
+    destaques_list.add({"titulo": "Esporte", "icon": FontAwesomeIcons.running});
     destaques_list.add({"titulo": "Livros", "icon": FontAwesomeIcons.book});
     destaques_list.add({"titulo": "Artes", "icon": FontAwesomeIcons.palette});
 
@@ -260,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           decoration: BoxDecoration(
                               gradient: LinearGradient(begin: FractionalOffset.topCenter, end: FractionalOffset.bottomCenter, colors: [
                                 Colors.grey.withOpacity(0.0),
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withOpacity(0.6),
                               ], stops: [
                                 0.0,
                                 1.0
