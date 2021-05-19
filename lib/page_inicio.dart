@@ -107,8 +107,8 @@ class PageInicioState extends State<PageInicio> {
     destaques_list.add({"titulo": "Livros", "icon": FontAwesomeIcons.book});
     destaques_list.add({"titulo": "Artes", "icon": FontAwesomeIcons.palette});
 
-    var cores_principais = ['0xffC80092', '0xff00401C', '0xff401903', '0xffD45B15'];
-    var cores_secundarias = ['0xff8C0E6A', '0xff00602C', '0xff5B2104', '0xffFF9658'];
+    var cores_principais = ['0xffC80092', '0xff0F7855', '0xff401903', '0xffD45B15'];
+    var cores_secundarias = ['0xff8C0E6A', '0xff2F7855', '0xff5B2104', '0xffFF9658'];
 
     int cor_index = 0;
 
@@ -255,14 +255,14 @@ class PageInicioState extends State<PageInicio> {
       imagens_list.add({"titulo": "Casacos", "img": "assets/categorias/masculino/casacos.png", "rota": "page_comercio_antiga"});
       imagens_list.add({"titulo": "Beleza", "img": "assets/categorias/masculino/beleza.png", "rota": "page_comercio_antiga"});
     } else {
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
-      imagens_list.add({"titulo": "", "img": "assets/categorias/mb/mb_default.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
+      imagens_list.add({"titulo": "", "img": "assets/outros/publi.png", "rota": "page_comercio_antiga"});
     }
 
     return imagens_list;

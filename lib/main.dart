@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         title: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(child: Image.asset('assets/logo_verde.png', scale: 1.5)),
+            Container(child: Image.asset('assets/logo_verde.png', scale: 1.3)),
           ]),
         ),
         actions: [
