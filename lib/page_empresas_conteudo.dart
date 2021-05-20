@@ -13,14 +13,27 @@ class EmpresasConteudo extends StatefulWidget {
   createState() => EmpresasConteudoState(empresa);
 }
 
-class EmpresasConteudoState extends State<EmpresasConteudo> {
+class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderStateMixin{
   dynamic empresa;
 
   double containerHeight = 800.0;
+
   int duracao_detalhamento = 600;
   bool _showProfile;
   dynamic produtoSelecionado;
   var produtos_list = [];
+
+  String tamanhoSelecionado ;
+  bool favoritado = false;
+
+  bool openSocial = false;
+  double socialHeight = 1.0;
+
+  AnimationController animationController;
+  Animation<double> tween;
+
+  AnimationController opacityController;
+  Animation<double> tweenOpa;
 
   EmpresasConteudoState(this.empresa);
 
@@ -43,6 +56,16 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
   void initState() {
     _showProfile = false;
     getProdutos();
+
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+    tween = Tween<double>(begin:0,end:100).animate(CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn));
+
+    animationController.addListener(() {
+      setState(() {
+
+      });
+    });
+
     super.initState();
   }
 
@@ -53,6 +76,16 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
           backgroundColor: global.cor_primaria,
           title: Text(empresa['nome']),
         ),
+        floatingActionButton: tamanhoSelecionado != null ?
+        FloatingActionButton.extended(
+          backgroundColor: global.cor_primaria,
+          foregroundColor: Colors.white,
+          onPressed: () {
+            // Respond to button press
+          },
+          icon: Icon(Icons.check),
+          label: Text('COMPRAR'),
+        ) : null,
         body: Stack(children: <Widget>[
           Container(
               height: 250,
@@ -83,19 +116,16 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
                                         ),
                                         SizedBox(height: 10.0),
                                         Align(
-                                          child: Text(empresa['slogan'], style: TextStyle(color: Color.fromRGBO(50, 50, 93, 1), fontSize: 18.0, fontWeight: FontWeight.w200)),
+                                          child: Text(empresa['slogan'], style: TextStyle(color: Colors.grey[800], fontSize: 18.0, fontWeight: FontWeight.w300)),
                                         ),
-                                        Divider(
-                                          height: 40.0,
-                                          thickness: 1.5,
-                                          indent: 32.0,
-                                          endIndent: 32.0,
-                                        ),
+                                        SizedBox(height: 20),
+                                        socialButton(),
+                                        SizedBox(height: 20),
                                         Padding(
                                           padding: const EdgeInsets.only(left: 32.0, right: 32.0),
                                           child: Align(
                                             child: Text("An artist of considerable range, Jessica name taken by Melbourne...",
-                                                textAlign: TextAlign.center, style: TextStyle(color: Color.fromRGBO(82, 95, 127, 1), fontSize: 17.0, fontWeight: FontWeight.w200)),
+                                                textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[800], fontSize: 17.0, fontWeight: FontWeight.w300)),
                                           ),
                                         ),
                                         SizedBox(height: 40.0),
@@ -177,60 +207,205 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
               duration: Duration(milliseconds: 300),
               // The green box must be a child of the AnimatedOpacity widget.
               child: returnOverlay()),
-          AnimatedPositioned(bottom: _showProfile ? 0 : -containerHeight, right: 0, left: 0, duration: Duration(milliseconds: duracao_detalhamento), child:
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: detalhamentoProduto()
-            )
-          )
+          AnimatedPositioned(bottom: _showProfile ? 0 : -containerHeight, right: 0, left: 0, duration: Duration(milliseconds: duracao_detalhamento), child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: detalhamentoProduto()))
         ]));
+  }
+
+  socialButton() {
+    return Column(children: [
+        InkWell(
+          child: Container(
+            margin: EdgeInsets.only(right: 5),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[400]),
+              borderRadius: BorderRadius.all(Radius.circular(200)),
+              color: openSocial ? global.cor_primaria : Colors.transparent,
+            ),
+            padding: EdgeInsets.only(top: 5, bottom: 5, right: 6, left: 20),
+            child:
+            Row(mainAxisSize: MainAxisSize.min,children: [Text('Contatos', style:TextStyle(color: openSocial ? Colors.white : Colors.grey[600], fontWeight: FontWeight.bold))
+            ,SizedBox(width: 5)
+            ,Icon(openSocial ? Icons.arrow_drop_up : Icons.arrow_drop_down, color: openSocial ? Colors.white : Colors.grey[600])
+            ]),
+          ),
+          onTap: () {
+            setState(() {
+              setState(() {
+                openSocial = openSocial ? false : true;
+                socialHeight = openSocial ? 100 : 1;
+
+                print(tween.value);
+
+                if(animationController.isCompleted)
+                  animationController.reverse();
+                else
+                  animationController.forward();
+              });
+            });
+          },
+        ),
+        SizedBox(height: 20),
+        Container(
+          height: tween.value,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+          ),
+          child:  getSectionSocial(),
+        ),
+      ]);
+  }
+
+  getSectionSocial() {
+
+    List social_list = [];
+    List <Widget> icons_list = [];
+
+    social_list.add({"titulo": "Roupas", "icon": FontAwesomeIcons.tshirt});
+    social_list.add({"titulo": "Casa", "icon": FontAwesomeIcons.home});
+    social_list.add({"titulo": "Esporte", "icon": FontAwesomeIcons.running});
+    social_list.add({"titulo": "Livros", "icon": FontAwesomeIcons.book});
+    social_list.add({"titulo": "Artes", "icon": FontAwesomeIcons.palette});
+
+    var cores_principais = ['0xffC80092', '0xff0F7855', '0xff401903', '0xffD45B15'];
+    var cores_secundarias = ['0xff8C0E6A', '0xff2F7855', '0xff5B2104', '0xffFF9658'];
+
+    int cor_index = 0;
+
+    for (int i = 0; i < social_list.length; i++) {
+      if (cor_index > 3) {
+        cor_index = 0;
+      }
+
+      social_list[i]['cor1'] = cores_principais[cor_index];
+      social_list[i]['cor2'] = cores_secundarias[cor_index];
+
+      cor_index++;
+    }
+
+    for (int i = 0; i < social_list.length; i++) {
+
+      icons_list.add(
+          AnimatedOpacity(
+            // If the widget is visible, animate to 0.0 (invisible).
+            // If the widget is hidden, animate to 1.0 (fully visible).
+              opacity: tween.value == 100 ? 1 : 0,
+              duration: Duration(milliseconds: tween.value != 100 ? 100 : 400),
+              // The green box must be a child of the AnimatedOpacity widget.
+              child: Container(
+          width: 80,
+          margin: EdgeInsets.only(left: i == 0 ? 12 : 5),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            InkWell(
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Container(
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(int.parse(social_list[i]['cor1'])),
+                            Color(int.parse(social_list[i]['cor2'])),
+                          ],
+                        ),
+                        //border: Border.all(width: 3, color: AppConfig.of(context).corPrincipal),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(child: FaIcon(social_list[i]['icon'], color: Colors.white)),
+                    ),
+                  ],
+                ),
+                onTap: () {}),
+            SizedBox(height: 5),
+            Row(children: [
+              Expanded(child: Text(social_list[i]['titulo'].toString(), textScaleFactor: 0.85, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]), textAlign: TextAlign.center, maxLines: 2)),
+            ])
+          ]))));
+    }
+
+    return Row(children: icons_list);
   }
 
   detalhamentoProduto() {
     if (produtoSelecionado != null)
       return Column(children: [
         Container(
-          transform: Matrix4.translationValues(0.0, 5.0, 0.0),
-          margin: EdgeInsets.only(top: 10),
-          padding: EdgeInsets.all(15),
-          child:Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(produtoSelecionado['nome'], textScaleFactor: 1.8, style: TextStyle(fontWeight: FontWeight.bold)),
-              InkWell(
-                child: Icon((Icons.clear)),
-                onTap: () {
-                  fecharDetalhamento();
-                },
-              ),
+            transform: Matrix4.translationValues(0.0, 5.0, 0.0),
+            margin: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.all(15),
+            child: Column(children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(produtoSelecionado['nome'], textScaleFactor: 1.8, style: TextStyle(fontWeight: FontWeight.bold)),
+                InkWell(
+                  child: Icon((Icons.clear)),
+                  onTap: () {
+                    fecharDetalhamento();
+                  },
+                ),
+              ]),
             ]),
-          ]),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-            color: Colors.white,
-          )
-        ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              color: Colors.white,
+            )),
         Container(
-          color: Colors.white,
-          child:
-          SingleChildScrollView(
+          color: Colors.grey[300],
+          child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Container(
-                    height: 300,
+                Stack(children: [
+                  Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: NetworkImage(produtoSelecionado['img']), fit: BoxFit.cover, alignment: Alignment.center),
+                      )),
+                  Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(image: NetworkImage(produtoSelecionado['img']), fit: BoxFit.cover, alignment: Alignment.center),
-                    )),
+                        gradient: LinearGradient(begin: FractionalOffset.topCenter, end: FractionalOffset.bottomCenter, colors: [
+                          Colors.grey.withOpacity(0.0),
+                          Colors.black.withOpacity(0.6),
+                        ], stops: [
+                          0.0,
+                          1.0
+                        ]),
+                        color: Colors.white),
+                    height: 300,
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child:
+                        InkWell(child:
+                        Container(
+                            padding: EdgeInsets.all(10),
+                            child:
+                             Icon(favoritado ? Icons.star : Icons.star_border, size: 40, color: Colors.amber.withOpacity(favoritado ? 0.6 : 0.3))
+                        ),
+                          onTap: () {
+                            setState(() {
+                              favoritado = favoritado ? false : true;
+                            });
+                          },
+                        )),
+                  )
+                ]),
                 Container(
+                  color: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(children: [
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                     SizedBox(height: 20),
                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(produtoSelecionado['nome_completo'], textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(produtoSelecionado['valor'], textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.w800, color: Colors.green))
+                          SizedBox(height: 5),
+                          Text(produtoSelecionado['valor'], textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.w800, color: Colors.green)),
+                          SizedBox(height: 10),
                         ],
                       ),
                       InkWell(
@@ -240,11 +415,36 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
                         },
                       ),
                     ]),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
                     Container(child: Text("Sew-along video tutorial on how to sew this dress using my pattern available on YouTube.")),
+                    SizedBox(height: 20),
+                    Text('Tamanhos', textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 5),
+                    Row(children: [
+                      containerTamanho('PP', 5),
+                      containerTamanho('P', 5),
+                      containerTamanho('M', 5),
+                      containerTamanho('G', 5),
+                      containerTamanho('XG', 5),
+                    ]),
                     SizedBox(height: 10),
                   ]),
-                )
+                ),
+                SizedBox(height: 10),
+                Container(padding: EdgeInsets.all(15), color: Colors.white, child:
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Icon(LineAwesomeIcons.pagelines, color: global.cor_primaria),
+                          SizedBox(width: 5),
+                          Text('Observações', textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold)),
+                        ]),
+                    SizedBox(height: 5),
+                    Text("Sew-along video tutorial on how to sew this dress using my pattern available on YouTube.")
+                  ]),
+                ),
+                SizedBox(height: 80),
               ],
             ),
           ),
@@ -253,6 +453,37 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
       ]);
     else
       return Container();
+  }
+
+  containerTamanho(String tam, double margin) {
+    return
+      InkWell(
+        child: Container(
+          margin: EdgeInsets.only(right: margin),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey[400]),
+            borderRadius: BorderRadius.all(Radius.circular(200)),
+            color: tamanhoSelecionado == tam ? global.cor_primaria : Colors.transparent,
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          child:
+          Row(mainAxisSize: MainAxisSize.min,children: [Text(tam, style:TextStyle(color: tamanhoSelecionado == tam ? Colors.white : Colors.black, fontWeight: FontWeight.bold))
+          ]),
+        ),
+        onTap: () {
+          setState(() {
+
+
+            if(tamanhoSelecionado == tam){
+              tamanhoSelecionado = null;
+              return;
+            }
+
+            tamanhoSelecionado = null;
+            tamanhoSelecionado = tam;
+          });
+        },
+      );
   }
 
   returnOverlay() {
@@ -272,6 +503,7 @@ class EmpresasConteudoState extends State<EmpresasConteudo> {
       _showProfile = false;
       produtoSelecionado = null;
       duracao_detalhamento = 100;
+      tamanhoSelecionado = null;
     });
   }
 
