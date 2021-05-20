@@ -32,8 +32,7 @@ class PageMenuState extends State<PageMenu> {
     dados.clear();
     dados.add({'titulo': 'Parceiros Raiz', 'subtitulo': 'Conheça nossos parceiros', "rota": "parceiros_raiz", "icone": LineAwesomeIcons.pagelines});
     dados.add({'titulo': 'Todas as Lojas', 'subtitulo': 'Encontre tudo que você precisa', "rota": "empresas", "icone": LineAwesomeIcons.shopping_cart});
-    dados.add({'titulo': 'Contate-nos', 'subtitulo': 'Dúvidas, opiniões ou sugestões?', "rota": "parceiros_raiz", "icone": LineAwesomeIcons.phone});
-    dados.add({'titulo': 'Sobre o App', 'subtitulo': 'Saiba mais sobre o Raiz', "rota": "parceiros_raiz", "icone": LineAwesomeIcons.mobile_phone});
+    dados.add({'titulo': 'Sobre o App', 'subtitulo': 'Saiba mais sobre o Raiz', "rota": "sobre", "icone": LineAwesomeIcons.mobile_phone});
 
     return Column(
       children: <Widget>[

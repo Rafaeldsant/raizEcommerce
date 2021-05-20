@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:raiz_ecommerce/page_empresas_conteudo.dart';
 import 'package:raiz_ecommerce/page_empresas_lista.dart';
 import 'package:raiz_ecommerce/page_parceiros_raiz.dart';
+import 'package:raiz_ecommerce/page_sobre.dart';
 
 getRota(dynamic dados) {
 
@@ -19,6 +20,7 @@ getRota(dynamic dados) {
 
     case "parceiros_raiz": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => ParceirosRaiz()));   break;}
     case "empresas": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => EmpresasLista()));   break;}
+    case "sobre": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => PageSobre()));   break;}
     case "page_empresas_conteudo": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => EmpresasConteudo(dados)));   break;}
 
 
