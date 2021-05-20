@@ -1,6 +1,6 @@
 # raiz_ecommerce
 
-A new Flutter project.
+Um novo conceito de ecommerce
 
 ## Getting Started
 
