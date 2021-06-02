@@ -101,11 +101,11 @@ class PageInicioState extends State<PageInicio> {
   getDestaquesConteudo() {
     destaques_list.clear();
 
-    destaques_list.add({"titulo": "Roupas", "icon": FontAwesomeIcons.tshirt});
-    destaques_list.add({"titulo": "Casa", "icon": FontAwesomeIcons.home});
-    destaques_list.add({"titulo": "Esporte", "icon": FontAwesomeIcons.running});
-    destaques_list.add({"titulo": "Livros", "icon": FontAwesomeIcons.book});
-    destaques_list.add({"titulo": "Artes", "icon": FontAwesomeIcons.palette});
+    destaques_list.add({"titulo": "Roupas", "icon": FontAwesomeIcons.tshirt, "segmento": "roupas"});
+    destaques_list.add({"titulo": "Casa", "icon": FontAwesomeIcons.home, "segmento": "casa"});
+    destaques_list.add({"titulo": "Esporte", "icon": FontAwesomeIcons.running, "segmento": "esporte"});
+    destaques_list.add({"titulo": "Livros", "icon": FontAwesomeIcons.book, "segmento": "livros"});
+    destaques_list.add({"titulo": "Artes", "icon": FontAwesomeIcons.palette, "segmento": "artes"});
 
     var cores_principais = ['0xffC80092', '0xff0F7855', '0xff401903', '0xffD45B15'];
     var cores_secundarias = ['0xff8C0E6A', '0xff2F7855', '0xff5B2104', '0xffFF9658'];
@@ -154,7 +154,11 @@ class PageInicioState extends State<PageInicio> {
                   ),
                 ],
               ),
-              onTap: () {}),
+              onTap: () {
+                dados_destaques['context'] = context;
+                dados_destaques['rota'] = "page_segmento";
+                rota.getRota(dados_destaques);
+              }),
           SizedBox(height: 5),
           Row(children: [
             Expanded(child: Text(dados_destaques['titulo'].toString(), textScaleFactor: 0.85, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]), textAlign: TextAlign.center, maxLines: 2)),
