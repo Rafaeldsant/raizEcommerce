@@ -56,7 +56,7 @@ class PageSobreState extends State<PageSobre> {
                       width: 30.0,
                       height: 30.0,
                       decoration: new BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withOpacity(0.6),
                         shape: BoxShape.circle,
                       )),
                     onTap: () {

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:raiz_ecommerce/global.dart' as global;
+import 'package:raiz_ecommerce/page_rota.dart' as rota;
 
 class PagePerfil extends StatefulWidget {
   PagePerfil();
@@ -29,9 +30,9 @@ class PagePerfilState extends State<PagePerfil> {
   @override
   Widget build(BuildContext context) {
     dados.clear();
-    dados.add({'titulo': 'Meus Dados', 'subtitulo': 'Informações da sua conta', "icone": LineAwesomeIcons.user});
-    dados.add({'titulo': 'Favoritos', 'subtitulo': 'Guardamos tudo para você', "icone": LineAwesomeIcons.heart});
-    dados.add({'titulo': 'Sair', 'subtitulo': 'Deseja realizar o logout?', "icone": LineAwesomeIcons.power_off});
+    dados.add({'titulo': 'Meus Dados', 'subtitulo': 'Informações da sua conta', "icone": LineAwesomeIcons.user, "rota": "page_perfil"});
+    dados.add({'titulo': 'Favoritos', 'subtitulo': 'Guardamos tudo para você', "icone": LineAwesomeIcons.heart, "rota": "page_favoritos"});
+    dados.add({'titulo': 'Sair', 'subtitulo': 'Deseja realizar o logout?', "icone": LineAwesomeIcons.power_off, "rota": "page_logout"});
 
     return Column(
       children: <Widget>[
@@ -101,7 +102,10 @@ class PagePerfilState extends State<PagePerfil> {
                   ),
                 ],
               )),
-          onTap: () {},
+          onTap: () {
+            registro['context'] = context;
+            rota.getRota(registro);
+          },
         )
       ],
     );

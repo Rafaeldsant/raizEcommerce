@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:raiz_ecommerce/page_empresas_conteudo.dart';
 import 'package:raiz_ecommerce/page_empresas_lista.dart';
+import 'package:raiz_ecommerce/page_favoritos.dart';
 import 'package:raiz_ecommerce/page_parceiros_raiz.dart';
 import 'package:raiz_ecommerce/page_segmento.dart';
 import 'package:raiz_ecommerce/page_sobre.dart';
@@ -24,6 +25,7 @@ getRota(dynamic dados) {
     case "sobre": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => PageSobre()));   break;}
     case "page_empresas_conteudo": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => EmpresasConteudo(dados)));   break;}
     case "page_segmento": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => PageSegmento(dados)));   break;}
+    case "page_favoritos": { Navigator.of(dados["context"]).push(MaterialPageRoute(builder: (context) => PageFavoritos()));   break;}
 
 
     default : {

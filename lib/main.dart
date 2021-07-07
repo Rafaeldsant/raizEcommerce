@@ -5,6 +5,7 @@ import 'package:raiz_ecommerce/global.dart' as global;
 import 'package:raiz_ecommerce/page_inicio.dart';
 import 'package:raiz_ecommerce/page_menu.dart';
 import 'package:raiz_ecommerce/page_perfil.dart';
+import 'package:raiz_ecommerce/page_splash.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,15 +16,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Raiz E-commerce',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: body()
     );
   }
+}
+
+body() {
+  return Splash();
 }
 
 class MyHomePage extends StatefulWidget {
@@ -69,7 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         title: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            InkWell(child:
             Container(child: Image.asset('assets/logo_verde.png', scale: 1.3)),
+                onTap: () {
+                  global.favoritos.clear();
+            }),
           ]),
         ),
         actions: [
