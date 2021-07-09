@@ -56,7 +56,9 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
         conexao_produtos_opcoes = retorno.conexao;
         status_produtos_opcoes = retorno.status;
 
-        print(dados_produtos_opcoes.toString());
+        for (var resposta in dados_produtos_opcoes['dados_respostas']) {
+          resposta['selecionado'] = false;
+        }
 
       });
     }
@@ -385,8 +387,8 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
                       InkWell(
                         child: Icon((LineAwesomeIcons.share_square)),
                         onTap: () {
-                          print(produtoSelecionado);
-                          // compartilharProduto(produtoSelecionado);
+                          // print(produtoSelecionado);
+                          compartilharProduto(produtoSelecionado);
                         },
                       ),
                     ]),
@@ -432,7 +434,6 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
                   ]
 
               ),
-
               SizedBox(height: 10),
             ])
         );
@@ -441,11 +442,12 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
       perguntas_list.add(Container());
     }
 
+    perguntas_list.add(SizedBox(height: 50));
+
     return Column(children: perguntas_list);
   }
 
   Widget compartilharProduto(dynamic produto) {
-
 
       String msg =
           'Olha o que eu vi no Raiz E-commerce:\n'
@@ -505,14 +507,14 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
     if (opcoes_marcadas.length > 0) {
       if (tipo == 'unico') {
         for (int p = 0; p < opcoes_marcadas.length; p++) {
-          if (opcoes_marcadas[p]['perguntas_id'] == perguntas_id && opcoes_marcadas[p]['respostas_id'] != respostas_id) {
-            count += int.parse(opcoes_marcadas[p]['quant']);
+          if (opcoes_marcadas[p]['perguntas_id'].toString() == perguntas_id.toString() && opcoes_marcadas[p]['respostas_id'].toString() != respostas_id.toString()) {
+            count ++;
           }
         }
       } else {
         for (int p = 0; p < opcoes_marcadas.length; p++) {
-          if (opcoes_marcadas[p]['perguntas_id'] == perguntas_id) {
-            count += int.parse(opcoes_marcadas[p]['quant']);
+          if (opcoes_marcadas[p]['perguntas_id'].toString() == perguntas_id.toString()) {
+            count ++;
           }
         }
       }
@@ -528,6 +530,19 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
     }
   }
 
+  _desmarcaUltimo(String perguntas_id, dynamic opcoes) {
+
+    if (opcoes_marcadas.length > 0) {
+      for (int p = 0; p < opcoes.length; p++) {
+        if (opcoes[p]['selecionado'] && opcoes[p]['produtos_perguntas_id'].toString() == perguntas_id) {
+          setState(() {
+            opcoes[p]['selecionado'] = false;
+          });
+        }
+      }
+    }
+  }
+
   containerTamanho(dynamic perg, dynamic resp, double margin) {
     return InkWell(
       child: Container(
@@ -535,88 +550,81 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey[400]),
           borderRadius: BorderRadius.all(Radius.circular(200)),
-          color: tamanhoSelecionado == resp['resposta'] ? global.cor_primaria : Colors.transparent,
+          color: resp['selecionado'] ? global.cor_primaria : Colors.transparent,
         ),
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [Text(resp['resposta'], style: TextStyle(color: tamanhoSelecionado == resp['resposta'] ? Colors.white : Colors.black, fontWeight: FontWeight.bold))]),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [Text(resp['resposta'], style: TextStyle(color: resp['selecionado'] ? Colors.white : Colors.black, fontWeight: FontWeight.bold))]),
       ),
       onTap: () {
         setState(() {
 
-          var result = true;
+          bool result = true;
 
           if(perg['quant'] > 1) {
-            result = _verificaquant(perg['id'], perg['quant'], 'unico', respostas_id: resp['id']);
+            result = _verificaquant(perg['id'].toString(), perg['quant'].toString(), 'unico', respostas_id: resp['id'].toString());
           }
 
-          print(result);
-          //
-          // if (result) {
-          //   setState(() {
-          //
-          //     if(this.mounted) {
-          //       bloqueia = false;
-          //     }
-          //
-          //     if (opcoes_marcadas.length > 0) {
-          //       bool find = false;
-          //
-          //
-          //       for (int p = 0; p < opcoes_marcadas.length; p++) {
-          //         bool mesma_pergunta = false;
-          //         bool mesma_resposta = false;
-          //         bool mesmo_item = false;
-          //
-          //         if (opcoes_marcadas[p]['perguntas_id'] ==
-          //             pergunta.id) {
-          //           mesma_pergunta = true;
-          //         }
-          //
-          //         if (opcoes_marcadas[p]['respostas_id'] ==
-          //             opcoes[i].id) {
-          //           mesma_resposta = true;
-          //         }
-          //
-          //         if (opcoes_marcadas[p]['itens_id'] == item_id) {
-          //           mesmo_item = true;
-          //         }
-          //
-          //         if (mesma_pergunta && mesma_resposta && mesmo_item) {
-          //           opcoes_marcadas.remove(opcoes_marcadas[p]);
-          //           opcoes[i].selecionado = false;
-          //           find = true;
-          //         }
-          //
-          //
-          //         if(int.parse(pergunta.quant) == 1) {
-          //           if (mesma_pergunta && mesmo_item && !mesma_resposta) {
-          //             _desmarcaUltimo(pergunta.id, item_id);
-          //             opcoes_marcadas.remove(opcoes_marcadas[p]);
-          //           }
-          //         }
-          //       }
-          //
-          //       if (!find) {
-          //         opcoes[i].selecionado = true;
-          //         opcoes_marcadas.add({
-          //           'perguntas_id': pergunta.id,
-          //           'respostas_id': opcoes[i].id,
-          //           'quant': "1",
-          //           'itens_id': item_id,
-          //           'valor': opcoes[i].valor
-          //         });
-          //       }
-          //     } else {
-          //       opcoes[i].selecionado = true;
-          //       opcoes_marcadas.add({
-          //         'perguntas_id': pergunta.id,
-          //         'respostas_id': opcoes[i].id,
-          //         'quant': "1",
-          //         'itens_id': item_id,
-          //         'valor': opcoes[i].valor
-          //       });
-          //     }
-          //   });
+          if (result) {
+            setState(() {
+              // if(this.mounted) {
+              //   bloqueia = false;
+              // }
+
+              if (opcoes_marcadas.length > 0) {
+                bool find = false;
+
+
+                for (int p = 0; p < opcoes_marcadas.length; p++) {
+                  bool mesma_pergunta = false;
+                  bool mesma_resposta = false;
+
+                  if (opcoes_marcadas[p]['perguntas_id'] == perg['id']) {
+                    mesma_pergunta = true;
+                  }
+
+                  if (opcoes_marcadas[p]['respostas_id'] == resp['id']) {
+                    mesma_resposta = true;
+                  }
+
+                  if (mesma_pergunta && mesma_resposta) {
+                    opcoes_marcadas.remove(opcoes_marcadas[p]);
+                    resp['selecionado'] = false;
+                    find = true;
+                  }
+
+
+                  if (perg['quant'] == 1) {
+                    if (mesma_pergunta && !mesma_resposta) {
+                      _desmarcaUltimo(perg['id'].toString(), dados_produtos_opcoes['dados_respostas']);
+                      opcoes_marcadas.remove(opcoes_marcadas[p]);
+                    }
+                  }
+                }
+
+                if (!find) {
+                  resp['selecionado'] = true;
+                  opcoes_marcadas.add({
+                    'perguntas_id': perg['id'],
+                    'respostas_id': resp['id'],
+                    'quant': "1",
+                    'itens_id': produtoSelecionado['id'],
+                    'valor': resp['valor']
+                  });
+                }
+              } else {
+                resp['selecionado'] = true;
+                opcoes_marcadas.add({
+                  'perguntas_id': perg['id'],
+                  'respostas_id': resp['id'],
+                  'quant': "1",
+                  'itens_id': produtoSelecionado['id'],
+                  'valor': resp['valor']
+                });
+              }
+            });
+          }
+
+          print(opcoes_marcadas);
         });
       },
     );
