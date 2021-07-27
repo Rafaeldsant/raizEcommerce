@@ -118,8 +118,8 @@ open_ligar(String telefone) async {
  }
 }
 
-open_whatsapp(String whatsapp) async {
- var url = "whatsapp://send?phone=55"+whatsapp;
+open_whatsapp(String whatsapp, {String text = null}) async {
+ var url = "whatsapp://send?phone=55"+whatsapp+"&text="+(text ?? '')+"";
  await canLaunch(url) ? launch(url) : print("Erro abrindo WhatsApp");
 }
 

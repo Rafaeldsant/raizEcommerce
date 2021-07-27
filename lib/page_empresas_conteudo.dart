@@ -56,10 +56,13 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
         conexao_produtos_opcoes = retorno.conexao;
         status_produtos_opcoes = retorno.status;
 
+        for (var pergunta in dados_produtos_opcoes['dados_perguntas']) {
+          pergunta['global_key'] = new GlobalKey();
+        }
+
         for (var resposta in dados_produtos_opcoes['dados_respostas']) {
           resposta['selecionado'] = false;
         }
-
       });
     }
   }
@@ -394,8 +397,10 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
                     ]),
                     SizedBox(height: 5),
                     Container(child: Text(produtoSelecionado['descricao'])),
-                    if(dados_produtos_opcoes != null)
-                      sectionPerguntas(dados_produtos_opcoes)
+                    if (dados_produtos_opcoes != null) sectionPerguntas(dados_produtos_opcoes),
+                    SizedBox(height: 20),
+                    purchaseButton(),
+                    SizedBox(height: 20),
                   ]),
                 ),
                 SizedBox(height: 80),
@@ -410,53 +415,61 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
     }
   }
 
-  Widget sectionPerguntas(dynamic perguntas) {
+  var item_key_list = [];
+  AnimationController controller;
+  var animation_controller_key_list = [];
 
+  Widget sectionPerguntas(dynamic perguntas) {
     List<Widget> perguntas_list = [];
 
-    if(perguntas['dados_perguntas'].length > 0) {
-      for(var i = 0; i < perguntas['dados_perguntas'].length; i++) {
-        perguntas_list.add(
-            Column(
-                children: [
-              SizedBox(height: 20),
-              Row(children: [
-                Text('${perguntas['dados_perguntas'][i]['pergunta']}', textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold)),
-              ]),
-              Row(children:
-                  [
-                    Wrap(
-                        children: [
-                          for(var r = 0; r < perguntas['dados_respostas'].length; r++)
-                            if(perguntas['dados_respostas'][r]['produtos_perguntas_id'] == perguntas['dados_perguntas'][i]['id'])
-                              containerTamanho(perguntas['dados_perguntas'][i], perguntas['dados_respostas'][r], 5),
-                        ]),
-                  ]
+    animation_controller_key_list.clear();
 
-              ),
-              SizedBox(height: 10),
-            ])
-        );
+    if (perguntas['dados_perguntas'].length > 0) {
+      for (var i = 0; i < perguntas['dados_perguntas'].length; i++) {
+        controller = new AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+
+        final Animation<double> offsetAnimation = new Tween(begin: 0.0, end: 5.0).chain(CurveTween(curve: Curves.elasticIn)).animate(controller);
+
+        animation_controller_key_list.add({"perguntas_id": perguntas['dados_perguntas'][i]['id'], "controller": controller});
+
+        perguntas_list.add(Column(children: [
+          SizedBox(height: 20),
+          AnimatedBuilder(
+              animation: offsetAnimation,
+              builder: (buildContext, child) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                  padding: EdgeInsets.only(top: offsetAnimation.value + 5.0, bottom: 5.0 - offsetAnimation.value),
+                  child: Row(key: perguntas['dados_perguntas'][i]['global_key'], children: [
+                    Text('${perguntas['dados_perguntas'][i]['pergunta']}', textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold, color: offsetAnimation.value != 0 ? Colors.red : null)),
+                    Text(perguntas['dados_perguntas'][i]['obrigatorio'] == 1 ? '*' : '', textScaleFactor: 1.1, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                  ]),
+                );
+              }),
+          Row(children: [
+            Wrap(children: [
+              for (var r = 0; r < perguntas['dados_respostas'].length; r++)
+                if (perguntas['dados_respostas'][r]['produtos_perguntas_id'] == perguntas['dados_perguntas'][i]['id']) containerOpcoes(perguntas['dados_perguntas'][i], perguntas['dados_respostas'][r], 5),
+            ]),
+          ]),
+          SizedBox(height: 10),
+        ]));
       }
     } else {
       perguntas_list.add(Container());
     }
 
-    perguntas_list.add(SizedBox(height: 50));
-
     return Column(children: perguntas_list);
   }
 
   Widget compartilharProduto(dynamic produto) {
+    String msg = 'Olha o que eu vi no Raiz E-commerce:\n'
+        '${produto['nome']}\n'
+        '${produto['descricao']}\n'
+        'R\$${produto['valor_br']}\n'
+        '${produto['img1']}';
 
-      String msg =
-          'Olha o que eu vi no Raiz E-commerce:\n'
-          '${produto['nome']}\n'
-          '${produto['descricao']}\n'
-          'R\$${produto['valor_br']}\n'
-          '${produto['img1']}';
-
-      functions.compartilharTexto(msg);
+    functions.compartilharTexto(msg);
   }
 
   Widget imgDots(List<String> imgList) {
@@ -508,13 +521,13 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
       if (tipo == 'unico') {
         for (int p = 0; p < opcoes_marcadas.length; p++) {
           if (opcoes_marcadas[p]['perguntas_id'].toString() == perguntas_id.toString() && opcoes_marcadas[p]['respostas_id'].toString() != respostas_id.toString()) {
-            count ++;
+            count++;
           }
         }
       } else {
         for (int p = 0; p < opcoes_marcadas.length; p++) {
           if (opcoes_marcadas[p]['perguntas_id'].toString() == perguntas_id.toString()) {
-            count ++;
+            count++;
           }
         }
       }
@@ -524,14 +537,12 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
       } else {
         return true;
       }
-
     } else {
       return true;
     }
   }
 
   _desmarcaUltimo(String perguntas_id, dynamic opcoes) {
-
     if (opcoes_marcadas.length > 0) {
       for (int p = 0; p < opcoes.length; p++) {
         if (opcoes[p]['selecionado'] && opcoes[p]['produtos_perguntas_id'].toString() == perguntas_id) {
@@ -543,7 +554,7 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
     }
   }
 
-  containerTamanho(dynamic perg, dynamic resp, double margin) {
+  containerOpcoes(dynamic perg, dynamic resp, double margin) {
     return InkWell(
       child: Container(
         margin: EdgeInsets.only(right: margin, top: margin),
@@ -557,10 +568,9 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
       ),
       onTap: () {
         setState(() {
-
           bool result = true;
 
-          if(perg['quant'] > 1) {
+          if (perg['quant'] > 1) {
             result = _verificaquant(perg['id'].toString(), perg['quant'].toString(), 'unico', respostas_id: resp['id'].toString());
           }
 
@@ -572,7 +582,6 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
 
               if (opcoes_marcadas.length > 0) {
                 bool find = false;
-
 
                 for (int p = 0; p < opcoes_marcadas.length; p++) {
                   bool mesma_pergunta = false;
@@ -592,7 +601,6 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
                     find = true;
                   }
 
-
                   if (perg['quant'] == 1) {
                     if (mesma_pergunta && !mesma_resposta) {
                       _desmarcaUltimo(perg['id'].toString(), dados_produtos_opcoes['dados_respostas']);
@@ -603,23 +611,11 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
 
                 if (!find) {
                   resp['selecionado'] = true;
-                  opcoes_marcadas.add({
-                    'perguntas_id': perg['id'],
-                    'respostas_id': resp['id'],
-                    'quant': "1",
-                    'itens_id': produtoSelecionado['id'],
-                    'valor': resp['valor']
-                  });
+                  opcoes_marcadas.add({'perguntas_id': perg['id'], 'respostas_id': resp['id'], 'quant': "1", 'itens_id': produtoSelecionado['id'], 'valor': resp['valor']});
                 }
               } else {
                 resp['selecionado'] = true;
-                opcoes_marcadas.add({
-                  'perguntas_id': perg['id'],
-                  'respostas_id': resp['id'],
-                  'quant': "1",
-                  'itens_id': produtoSelecionado['id'],
-                  'valor': resp['valor']
-                });
+                opcoes_marcadas.add({'perguntas_id': perg['id'], 'respostas_id': resp['id'], 'quant': "1", 'itens_id': produtoSelecionado['id'], 'valor': resp['valor']});
               }
             });
           }
@@ -701,7 +697,6 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
           containerHeight = MediaQuery.of(context).size.height * 0.75;
           duracao_detalhamento = 600;
           _showProfile = true;
-
         });
       },
     );
@@ -749,6 +744,44 @@ class EmpresasConteudoState extends State<EmpresasConteudo> with TickerProviderS
             color: Colors.grey[200],
           ),
           child: Align(alignment: Alignment.center, child: ListView(scrollDirection: Axis.horizontal, shrinkWrap: true, children: getSectionSocial()))),
+    ]);
+  }
+
+  Widget purchaseButton() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      TextButton(
+          child: Text("Comprar Agora".toUpperCase(), style: TextStyle(fontSize: 14)),
+          style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 20)),
+              foregroundColor: MaterialStateProperty.all<Color>(global.cor_primaria),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: global.cor_primaria)))),
+          onPressed: () {
+            if (dados_produtos_opcoes['dados_perguntas'].length > 0 && dados_produtos_opcoes['dados_perguntas'] != null) {
+              for (int i = 0; i < dados_produtos_opcoes['dados_perguntas'].length; i++) {
+                if (dados_produtos_opcoes['dados_perguntas'][i]['obrigatorio'] == 1) {
+                  if (_verificaquant(dados_produtos_opcoes['dados_perguntas'][i]['id'].toString(), dados_produtos_opcoes['dados_perguntas'][i]['quant'].toString(), 'unico')) {
+                    Scrollable.ensureVisible(dados_produtos_opcoes['dados_perguntas'][i]['global_key'].currentContext);
+                    for (int c = 0; c < animation_controller_key_list.length; c++) {
+                      if (animation_controller_key_list[c]['perguntas_id'] == dados_produtos_opcoes['dados_perguntas'][i]['id']) {
+                        animation_controller_key_list[c]['controller'].forward(from: 0.0);
+                        animation_controller_key_list[c]['controller']
+                          ..addStatusListener((status) {
+                            if (status == AnimationStatus.completed) {
+                              animation_controller_key_list[c]['controller'].reverse();
+                            }
+                          });
+
+                        return;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            functions.open_whatsapp(empresa['whatsapp'], text: "teste");
+
+          }),
     ]);
   }
 }
