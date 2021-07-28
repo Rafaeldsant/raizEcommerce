@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:raiz_ecommerce/global.dart' as global;
-import 'package:raiz_ecommerce/page_inicio.dart';
-import 'package:raiz_ecommerce/page_menu.dart';
-import 'package:raiz_ecommerce/page_perfil.dart';
-import 'package:raiz_ecommerce/page_splash.dart';
+import 'package:raiz_ecommerce/source/global.dart' as global;
+import 'package:raiz_ecommerce/home/page_inicio.dart';
+import 'package:raiz_ecommerce/source/page_menu.dart';
+import 'package:raiz_ecommerce/perfil/login/gerenciamento_conta.dart';
+import 'package:raiz_ecommerce/source/page_splash.dart';
 
 void main() {
   runApp(MyApp());
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _children = [
     PageMenu(),
     PageInicio(),
-    PagePerfil()
+    GerenciamentoConta()
   ];
 
 

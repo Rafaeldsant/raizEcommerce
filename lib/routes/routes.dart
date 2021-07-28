@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:raiz_ecommerce/page_empresas_conteudo.dart';
-import 'package:raiz_ecommerce/page_empresas_lista.dart';
-import 'package:raiz_ecommerce/page_favoritos.dart';
-import 'package:raiz_ecommerce/page_parceiros_raiz.dart';
-import 'package:raiz_ecommerce/page_segmento.dart';
-import 'package:raiz_ecommerce/page_sobre.dart';
+import 'package:raiz_ecommerce/empresas/page_empresas_conteudo.dart';
+import 'package:raiz_ecommerce/empresas/page_empresas_lista.dart';
+import 'package:raiz_ecommerce/perfil/user/page_favoritos.dart';
+import 'package:raiz_ecommerce/parceirosRaiz/page_parceiros_raiz.dart';
+import 'package:raiz_ecommerce/produtos/page_segmento.dart';
+import 'package:raiz_ecommerce/app/page_sobre.dart';
 
 getRota(dynamic dados) {
 

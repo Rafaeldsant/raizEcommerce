@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:raiz_ecommerce/global.dart' as global;
-import 'package:raiz_ecommerce/page_rota.dart' as rota;
+import 'package:raiz_ecommerce/source/global.dart' as global;
+import 'package:raiz_ecommerce/routes/routes.dart' as rota;
 
 class PageSobre extends StatefulWidget {
 

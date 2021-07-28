@@ -3,9 +3,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:raiz_ecommerce/global.dart' as global;
-import 'package:raiz_ecommerce/page_rota.dart' as rota;
-import 'package:raiz_ecommerce/functions.dart' as functions;
+import 'package:raiz_ecommerce/source/global.dart' as global;
+import 'package:raiz_ecommerce/routes/routes.dart' as rota;
+import 'package:raiz_ecommerce/source/functions.dart' as functions;
 
 class EmpresasConteudo extends StatefulWidget {
   dynamic empresa;

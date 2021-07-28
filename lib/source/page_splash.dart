@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:raiz_ecommerce/global.dart' as global;
+import 'package:raiz_ecommerce/source/global.dart' as global;
 
 import 'package:flutter/material.dart';
 import 'package:raiz_ecommerce/main.dart';
-import 'package:raiz_ecommerce/functions.dart' as functions;
+import 'package:raiz_ecommerce/source/functions.dart' as functions;
 
 class Splash extends StatefulWidget {
   @override

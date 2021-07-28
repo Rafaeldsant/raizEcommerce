@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:raiz_ecommerce/global.dart' as global;
+import 'package:raiz_ecommerce/source/global.dart' as global;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
